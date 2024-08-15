@@ -38,7 +38,7 @@ public class CourseController {
         return courseJpaService.updateCourse(courseId, course);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/courses/{courseId}")
     public void deleteCourse(@PathVariable("courseId") int courseId) {
         courseJpaService.deleteCourse(courseId);
     }

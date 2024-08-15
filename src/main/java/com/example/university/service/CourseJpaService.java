@@ -17,9 +17,6 @@ public class CourseJpaService implements CourseRepository {
     @Autowired
     private StudentJpaRepository studentJpaRepository;
 
-    @Autowired
-    private ProfessorJpaRepository professorJpaRepository;
-
     @Override
     public ArrayList<Course> getCourses() {
         List<Course> coursesList = courseJpaRepository.findAll();
@@ -40,6 +37,7 @@ public class CourseJpaService implements CourseRepository {
 
     @Override
     public Course addCourse(Course course) {
+        Professor professor = course.getProfessor();
         List<Integer> studentIds = new ArrayList<>();
         for (Student student : course.getStudents()) {
             studentIds.add(student.getStudentId());
@@ -49,6 +47,7 @@ public class CourseJpaService implements CourseRepository {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         course.setStudents(students);
+        course.setProfessor(professor);
         return courseJpaRepository.save(course);
     }
 
@@ -85,17 +84,24 @@ public class CourseJpaService implements CourseRepository {
     @Override
     public void deleteCourse(int courseId) {
         try {
+            Course course = courseJpaRepository.findById(courseId).get();
+            List<Student> students = course.getStudents();
+            for (Student student : students) {
+                student.getCourses().remove(course);
+            }
+            studentJpaRepository.saveAll(students);
             courseJpaRepository.deleteById(courseId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
     }
 
     @Override
     public Professor getCourseProfessor(int courseId) {
         try {
             Course course = courseJpaRepository.findById(courseId).get();
-            return (Professor) professorJpaRepository.findByCourse(course);
+            return course.getProfessor();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

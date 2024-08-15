@@ -14,6 +14,9 @@ public class ProfessorJpaService implements ProfessorRepository {
     @Autowired
     private ProfessorJpaRepository professorJpaRepository;
 
+    @Autowired
+    private CourseJpaRepository courseJpaRepository;
+
     @Override
     public ArrayList<Professor> getProfessors() {
         List<Professor> professorsList = professorJpaRepository.findAll();
@@ -57,10 +60,18 @@ public class ProfessorJpaService implements ProfessorRepository {
     @Override
     public void deleteProfessor(int professorId) {
         try {
+            Professor professor = professorJpaRepository.findById(professorId).get();
+            List<Course> courses = courseJpaRepository.findByCourse(professor);
+            for (Course course : courses) {
+                course.setProfessor(null);
+            }
+            courseJpaRepository.saveAll(courses);
             professorJpaRepository.deleteById(professorId);
+
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
     }
 
     @Override
