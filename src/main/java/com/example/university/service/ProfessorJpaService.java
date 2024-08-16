@@ -61,7 +61,7 @@ public class ProfessorJpaService implements ProfessorRepository {
     public void deleteProfessor(int professorId) {
         try {
             Professor professor = professorJpaRepository.findById(professorId).get();
-            List<Course> courses = courseJpaRepository.findByCourse(professor);
+            List<Course> courses = courseJpaRepository.findByProfessor(professor);
             for (Course course : courses) {
                 course.setProfessor(null);
             }
@@ -78,9 +78,9 @@ public class ProfessorJpaService implements ProfessorRepository {
     public List<Course> getProfessorCourses(int professorId) {
         try {
             Professor professor = professorJpaRepository.findById(professorId).get();
-            return ((Object) professor).findByCourse();
+            return courseJpaRepository.findByProfessor(professor);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "professorId " + professorId + " not found");
         }
     }
 }
