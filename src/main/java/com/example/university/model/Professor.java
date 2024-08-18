@@ -7,10 +7,10 @@ import javax.persistence.*;
 public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "professorid")
+    @Column(name = "id")
     private int professorId;
 
-    @Column(name = "professorname")
+    @Column(name = "name")
     private String professorName;
 
     @Column(name = "department")

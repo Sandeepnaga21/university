@@ -11,10 +11,10 @@ import java.util.*;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "studentid")
+    @Column(name = "id")
     private int studentId;
 
-    @Column(name = "studentname")
+    @Column(name = "name")
     private String studentName;
 
     @Column(name = "email")
